@@ -1,17 +1,21 @@
 import { prismaClient } from "../../prisma/prisma";
+import { UpdateUserInput } from "../dtos/input/user.input";
 
 export class UserService {
-  async findUser(id: string) {
-    const user = await prismaClient.user.findUnique({
-      where: {
-        id
-      }
-    })
+  async updateUser(id: string, data: UpdateUserInput) {
+    const { name } = data
 
-    if(!user) {
-      throw new Error('Usuário não existe')
+    if(!name.trim()) {
+      throw new Error("Nome inválido")
     }
 
-    return user
+    return prismaClient.user.update({
+      where: {
+        id
+      },
+      data: {
+        name: name.trim()
+      }
+    })
   }
 }
