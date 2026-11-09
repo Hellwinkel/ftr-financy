@@ -8,7 +8,7 @@ const transactionTypeVariants = cva(
     variants: {
       type: {
         income: "text-green-dark [&_svg]:text-green-base",
-        outcome: "text-red-dark [&_svg]:text-red-base"
+        expense: "text-red-dark [&_svg]:text-red-base"
       }
     }
   }
@@ -16,10 +16,10 @@ const transactionTypeVariants = cva(
 
 const config = {
   income: { label: "Entrada", Icon: CircleArrowUp },
-  outcome: { label: "Saída", Icon: CircleArrowDown }
+  expense: { label: "Saída", Icon: CircleArrowDown }
 }
 
-function TransactionType({ type, className }: {type: "income" | "outcome"; className?: string}) {
+function TransactionType({ type, className }: {type: "income" | "expense"; className?: string}) {
   const {label, Icon} = config[type]
 
   return (

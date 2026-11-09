@@ -99,7 +99,7 @@ function App() {
 
       <div className="flex items-center gap-3">
         <TransactionType type="income" />
-        <TransactionType type="outcome" />
+        <TransactionType type="expense" />
       </div>
     </main>
   )
