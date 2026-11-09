@@ -32,16 +32,15 @@ export class AuthService {
       }
     })
 
-    return this.generateTokens(user)
+    return this.generateToken(user)
   }
 
-  generateTokens(user: User) {
+  generateToken(user: User) {
     const { id, email } = user
 
-    const token = signJwt({ id, email }, '15m')
-    const refreshToken = signJwt({ id, email }, '1d')
+    const token = signJwt({ id, email }, '1d')
 
-    return { token, refreshToken, user }
+    return { token, user }
   }
 
   async login(data: LoginInput) {
@@ -64,6 +63,6 @@ export class AuthService {
       throw new Error('Credenciais inválidas')
     }
 
-    return this.generateTokens(existingUser)
+    return this.generateToken(existingUser)
   }
 }
