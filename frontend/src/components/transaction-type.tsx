@@ -1,33 +1,33 @@
-import { cva } from "class-variance-authority";
-import { cn } from "cn";
-import { CircleArrowDown, CircleArrowUp } from "lucide-react";
+import { cva } from 'class-variance-authority'
+import { cn } from 'cn'
+import { CircleArrowDown, CircleArrowUp } from 'lucide-react'
 
 const transactionTypeVariants = cva(
-  "inline-flex items-center gap-2 text-sm font-medium [&_svg]:size-4 [&_svg]:shrink-0",
-  {
-    variants: {
-      type: {
-        income: "text-green-dark [&_svg]:text-green-base",
-        expense: "text-red-dark [&_svg]:text-red-base"
-      }
-    }
-  }
+	'inline-flex items-center gap-2 text-sm font-medium [&_svg]:size-4 [&_svg]:shrink-0',
+	{
+		variants: {
+			type: {
+				income: 'text-green-dark [&_svg]:text-green-base',
+				expense: 'text-red-dark [&_svg]:text-red-base',
+			},
+		},
+	}
 )
 
 const config = {
-  income: { label: "Entrada", Icon: CircleArrowUp },
-  expense: { label: "Saída", Icon: CircleArrowDown }
+	income: { label: 'Entrada', Icon: CircleArrowUp },
+	expense: { label: 'Saída', Icon: CircleArrowDown },
 }
 
-function TransactionType({ type, className }: {type: "income" | "expense"; className?: string}) {
-  const {label, Icon} = config[type]
+function TransactionType({ type, className }: { type: 'income' | 'expense'; className?: string }) {
+	const { label, Icon } = config[type]
 
-  return (
-    <span className={cn(transactionTypeVariants({ type }), className)}>
-      <Icon />
-      {label}
-    </span>
-  )
+	return (
+		<span className={cn(transactionTypeVariants({ type }), className)}>
+			<Icon />
+			{label}
+		</span>
+	)
 }
 
-export {TransactionType, transactionTypeVariants}
+export { TransactionType, transactionTypeVariants }

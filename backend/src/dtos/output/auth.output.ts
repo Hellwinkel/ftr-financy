@@ -1,20 +1,20 @@
-import { Field, ObjectType } from "type-graphql"
-import { UserModel } from "../../models/user.model"
+import { Field, ObjectType } from 'type-graphql'
+import { UserModel } from '../../models/user.model'
 
 @ObjectType()
 export class RegisterOutput {
-  @Field(() => String)
-  token!: string
+	@Field(() => String)
+	token!: string
 
-  @Field(() => UserModel)
-  user!: UserModel
+	@Field(() => UserModel)
+	user!: UserModel
 }
 
 @ObjectType()
 export class LoginOutput {
-  @Field(() => String)
-  token!: string
+	@Field(() => String)
+	token!: string
 
-  @Field(() => UserModel)
-  user!: UserModel
+	@Field(() => UserModel)
+	user!: UserModel
 }

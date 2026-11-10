@@ -1,21 +1,21 @@
-import { prismaClient } from "../../prisma/prisma";
-import { UpdateUserInput } from "../dtos/input/user.input";
+import { prismaClient } from '../../prisma/prisma'
+import type { UpdateUserInput } from '../dtos/input/user.input'
 
 export class UserService {
-  async updateUser(id: string, data: UpdateUserInput) {
-    const { name } = data
+	async updateUser(id: string, data: UpdateUserInput) {
+		const { name } = data
 
-    if(!name.trim()) {
-      throw new Error("Nome inválido")
-    }
+		if (!name.trim()) {
+			throw new Error('Nome inválido')
+		}
 
-    return prismaClient.user.update({
-      where: {
-        id
-      },
-      data: {
-        name: name.trim()
-      }
-    })
-  }
+		return prismaClient.user.update({
+			where: {
+				id,
+			},
+			data: {
+				name: name.trim(),
+			},
+		})
+	}
 }
