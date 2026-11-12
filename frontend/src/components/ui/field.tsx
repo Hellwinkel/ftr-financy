@@ -19,7 +19,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
 		<Label
 			data-slot="field-label"
 			className={cn(
-				'w-fit group-[:focus-within:not(:has([data-slot=checkbox]))]/field:text-brand-base group-has-aria-invalid/field:text-danger! group-has-[[data-slot=checkbox]]/field:font-normal group-has-[[data-slot=checkbox]:not([data-disabled])]/field:cursor-pointer group-has-[[data-slot=checkbox][data-disabled]]/field:opacity-50',
+				'w-fit group-[:focus-within:not(:has([data-slot=checkbox]))]/field:text-brand-base group-has-aria-invalid/field:text-danger! group-has-data-[slot=checkbox]/field:font-normal group-has-[[data-slot=checkbox]:not([data-disabled])]/field:cursor-pointer group-has-[[data-slot=checkbox][data-disabled]]/field:opacity-50',
 				className
 			)}
 			{...props}
