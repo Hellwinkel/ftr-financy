@@ -166,3 +166,11 @@
 		@apply font-sans;
 	}
 }
+
+@utility text-link {
+	@apply inline-flex items-center gap-1 text-sm font-medium text-brand-base underline-offset-4 hover:underline not-[disabled]:cursor-pointer;
+
+	& svg {
+		@apply size-5 shrink-0;
+	}
+}

@@ -1,5 +1,6 @@
 import { ArrowUpDown, Lock, Mail, Trash, UserRoundPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Layout } from './components/layout'
 import { TransactionType } from './components/transaction-type'
 import { Badge } from './components/ui/badge'
 import { Button } from './components/ui/button'
@@ -13,14 +14,39 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from './components/ui/select'
+import { Dashboard } from './pages/dashboard'
+import { Login } from './pages/login'
+import { Profile } from './pages/profile'
+import { Signup } from './pages/signup'
 
 function App() {
 	const [numero, setNumero] = useState(0)
 	const tipos = { income: 'Receita', expense: 'Despesa' }
 
+	const login = false
+	const signup = false
+	const layout = true
+
 	useEffect(() => {
 		console.log(`O número mudou e agora é ${numero}`)
 	}, [numero])
+
+	if (login) {
+		return <Login />
+	}
+
+	if (signup) {
+		return <Signup />
+	}
+
+	if (layout) {
+		return (
+			<Layout>
+				<Profile />
+				{/* <Dashboard /> */}
+			</Layout>
+		)
+	}
 
 	return (
 		<main className="flex min-h-screen py-24 items-center justify-center flex-col gap-4">

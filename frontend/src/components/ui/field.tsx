@@ -6,7 +6,7 @@ function Field({ className, ...props }: React.ComponentProps<'div'>) {
 		<div
 			data-slot="field"
 			className={cn(
-				'group/field flex w-full gap-2 flex-col has-[>[data-slot=checkbox]]:flex-row has-[>[data-slot=checkbox]]:items-center',
+				'group/field flex w-full gap-2 flex-col has-[>[data-slot=checkbox]]:flex-row has-[>[data-slot=checkbox]]:items-center has-[>[data-slot=checkbox]]:w-fit',
 				className
 			)}
 			{...props}
