@@ -1,8 +1,9 @@
 import { ChevronRight, CircleArrowDown, CircleArrowUp, icons, Plus, Wallet } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react/types'
+import { Link } from 'react-router'
 import { CategoryIcon } from '@/components/category-icon'
+import { DashboardSummaryCard } from '@/components/dashboard-summary-card'
 import { SectionTitle } from '@/components/section-title'
-import { SummaryCard } from '@/components/summary-card'
 import { Badge, type BadgeVariant } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import type { CategoryColor } from '@/lib/category-colors'
@@ -115,21 +116,21 @@ export function Dashboard() {
 			<h1 className="sr-only">Dashboard</h1>
 
 			<div className="grid gap-6 grid-cols-3 auto-rows-min">
-				<SummaryCard
+				<DashboardSummaryCard
 					icon={Wallet}
 					iconClassName="text-purple-base"
 					title="Saldo total"
 					value={formatCurrency(1284732)}
 				/>
 
-				<SummaryCard
+				<DashboardSummaryCard
 					icon={CircleArrowUp}
 					iconClassName="text-brand-base"
 					title="Receitas do mês"
 					value={formatCurrency(425000)}
 				/>
 
-				<SummaryCard
+				<DashboardSummaryCard
 					icon={CircleArrowDown}
 					iconClassName="text-red-base"
 					title="Despesas do mês"
@@ -139,10 +140,10 @@ export function Dashboard() {
 				<Card size="flush" render={<section />} className="col-span-2 self-start">
 					<CardHeader className="flex flex-row flex-wrap gap-4 items-center justify-between px-6 py-5 border-gray-200 border-b">
 						<SectionTitle>Transações recentes</SectionTitle>
-						<a href="transacoes" className="text-link">
+						<Link to="/transacoes" className="text-link">
 							Ver todas
 							<ChevronRight size={20} />
-						</a>
+						</Link>
 					</CardHeader>
 					<CardContent className="gap-0">
 						<ul>
@@ -205,10 +206,10 @@ export function Dashboard() {
 				<Card render={<section />} size="flush" className="self-start">
 					<CardHeader className="flex flex-row flex-wrap gap-4 items-center justify-between px-6 py-5 border-gray-200 border-b">
 						<SectionTitle>Categorias</SectionTitle>
-						<a href="categorias" className="text-link">
+						<Link to="/categorias" className="text-link">
 							Gerenciar
 							<ChevronRight size={20} />
-						</a>
+						</Link>
 					</CardHeader>
 					<CardContent className="gap-0">
 						<ul className="flex flex-col gap-5 p-6">

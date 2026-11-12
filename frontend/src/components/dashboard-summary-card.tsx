@@ -3,14 +3,19 @@ import type { LucideIcon } from 'lucide-react/types'
 import { SectionTitle } from './section-title'
 import { Card, CardContent, CardHeader } from './ui/card'
 
-type SummaryCardProps = {
+type DashboardSummaryCardProps = {
 	icon: LucideIcon
 	iconClassName?: string
 	title: string
 	value: string
 }
 
-export function SummaryCard({ icon: Icon, iconClassName, title, value }: SummaryCardProps) {
+export function DashboardSummaryCard({
+	icon: Icon,
+	iconClassName,
+	title,
+	value,
+}: DashboardSummaryCardProps) {
 	return (
 		<Card render={<section />} className="gap-4 p-6">
 			<CardHeader className="flex-row items-center gap-3">
