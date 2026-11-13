@@ -18,7 +18,7 @@ const buttonVariants = cva(
 				default: "px-4 py-3 text-base [&_svg:not([class*='size-'])]:size-[18px]",
 				sm: "text-sm px-3 py-2 [&_svg:not([class*='size-'])]:size-[16px]",
 				icon: "p-[8px] [&_svg:not([class*='size-'])]:size-[16px]",
-				pagination: 'h-8 min-w-8 px-2 text-sm',
+				pagination: "h-8 min-w-8 px-2 text-sm [&_svg:not([class*='size-'])]:size-4",
 			},
 		},
 		defaultVariants: {
