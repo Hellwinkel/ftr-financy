@@ -40,7 +40,7 @@ export function Navbar() {
 					</ul>
 				</nav>
 
-				<Link to="/perfil" className="justify-self-end">
+				<Link to="/perfil" className="justify-self-end" title="Editar perfil">
 					<Avatar>
 						<AvatarFallback>CT</AvatarFallback>
 					</Avatar>

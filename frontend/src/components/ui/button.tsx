@@ -3,16 +3,16 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from 'cn'
 
 const buttonVariants = cva(
-	'group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-[8px] border border-transparent font-medium leading-normal whitespace-nowrap transition-all outline-none select-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+	'group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-[8px] font-medium leading-normal whitespace-nowrap transition-all outline-none select-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
 	{
 		variants: {
 			variant: {
 				default:
 					'bg-brand-base text-white hover:bg-brand-dark disabled:opacity-50 [&_svg]:text-gray-100 focus-visible:ring-brand-base/25',
 				outline:
-					'border-gray-300 bg-white text-gray-700 hover:bg-gray-200 focus-visible:ring-gray-300/50',
+					'inset-shadow-[0_0_0_1px] inset-shadow-gray-300 bg-white text-gray-700 hover:bg-gray-200 hover:inset-shadow-gray-200 focus-visible:ring-gray-300/50',
 				destructive:
-					'border-gray-300 bg-white text-gray-700 [&_svg]:text-danger hover:bg-gray-200 focus-visible:ring-gray-300/50',
+					'inset-shadow-[0_0_0_1px] inset-shadow-gray-300 bg-white text-gray-700 hover:bg-gray-200 hover:inset-shadow-gray-200 [&_svg]:text-danger focus-visible:ring-gray-300/50',
 			},
 			size: {
 				default: "px-4 py-3 text-base [&_svg:not([class*='size-'])]:size-[18px]",
