@@ -174,3 +174,7 @@
 		@apply size-5 shrink-0;
 	}
 }
+
+@utility nav-link {
+	@apply inline-flex flex-col items-center text-sm text-gray-600 transition-colors hover:text-brand-dark aria-[current=page]:text-brand-base aria-[current=page]:font-semibold after:content-[attr(data-label)/''] after:font-semibold after:h-0 after:invisible after:overflow-hidden after:select-none;
+}

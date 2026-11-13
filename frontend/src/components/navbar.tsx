@@ -13,27 +13,17 @@ export function Navbar() {
 				<nav className="justify-self-center">
 					<ul className="flex items-center gap-5">
 						<li>
-							<NavLink
-								to="/"
-								end
-								className="text-sm text-gray-600 hover:text-brand-dark aria-[current=page]:text-brand-base aria-[current=page]:font-semibold"
-							>
+							<NavLink to="/" end data-label="Dashboard" className="nav-link">
 								Dashboard
 							</NavLink>
 						</li>
 						<li>
-							<NavLink
-								to="/transacoes"
-								className="text-sm text-gray-600 hover:text-brand-dark aria-[current=page]:text-brand-base aria-[current=page]:font-semibold"
-							>
+							<NavLink to="/transacoes" data-label="Transações" className="nav-link">
 								Transações
 							</NavLink>
 						</li>
 						<li>
-							<NavLink
-								to="/categorias"
-								className="text-sm text-gray-600 hover:text-brand-dark aria-[current=page]:text-brand-base aria-[current=page]:font-semibold"
-							>
+							<NavLink to="/categorias" data-label="Categorias" className="nav-link">
 								Categorias
 							</NavLink>
 						</li>
