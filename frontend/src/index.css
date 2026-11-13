@@ -164,6 +164,21 @@
 	}
 	html {
 		@apply font-sans;
+		scrollbar-gutter: stable;
+	}
+
+	::-webkit-scrollbar {
+		width: 4px;
+		height: 4px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--color-gray-300);
+		border-radius: 10rem;
 	}
 }
 
