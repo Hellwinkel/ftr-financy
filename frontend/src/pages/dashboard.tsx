@@ -1,5 +1,12 @@
-import { ChevronRight, CircleArrowDown, CircleArrowUp, icons, Plus, Wallet } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react/types'
+import {
+	ChevronRight,
+	CircleArrowDown,
+	CircleArrowUp,
+	icons,
+	type LucideIcon,
+	Plus,
+	Wallet,
+} from 'lucide-react'
 import { Link } from 'react-router'
 import { CategoryIcon } from '@/components/category-icon'
 import { DashboardSummaryCard } from '@/components/dashboard-summary-card'
@@ -138,7 +145,7 @@ export function Dashboard() {
 				/>
 
 				<Card size="flush" render={<section />} className="col-span-2 self-start">
-					<CardHeader className="flex flex-row flex-wrap gap-4 items-center justify-between px-6 py-5 border-gray-200 border-b">
+					<CardHeader className="flex flex-row flex-wrap gap-4 items-center justify-between pl-6 pr-3 py-5 border-gray-200 border-b">
 						<SectionTitle>Transações recentes</SectionTitle>
 						<Link to="/transacoes" className="text-link">
 							Ver todas
@@ -154,7 +161,7 @@ export function Dashboard() {
 								return (
 									<li
 										key={item.id}
-										className="grid grid-cols-[1fr_10rem_10rem] gap-4 border-gray-200 border-b"
+										className="grid grid-cols-[1fr_10rem_10rem] gap-2 border-gray-200 border-b"
 									>
 										<div className="flex items-center gap-4 px-6 py-4">
 											{Icon && (

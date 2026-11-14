@@ -1,5 +1,5 @@
 import { cn } from 'cn'
-import type { LucideIcon } from 'lucide-react/types'
+import type { LucideIcon } from 'lucide-react'
 import { SectionTitle } from './section-title'
 import { Card, CardContent, CardHeader } from './ui/card'
 

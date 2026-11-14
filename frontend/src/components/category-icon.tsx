@@ -11,7 +11,7 @@ export function CategoryIcon({ icon: Icon, color }: CategoryIconProps) {
 	return (
 		<div
 			className={cn(
-				'grid size-10 place-items-center rounded-[8px] shrink-0',
+				'grid size-10 place-items-center rounded-lg shrink-0',
 				categoryColors[color]?.icon
 			)}
 		>

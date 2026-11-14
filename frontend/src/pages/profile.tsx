@@ -18,8 +18,8 @@ export function Profile() {
 			<h1 className="sr-only">Meu perfil</h1>
 
 			<Card className="w-full max-w-md mx-auto" render={<form />}>
-				<CardHeader className="flex flex-col items-center">
-					<Avatar size="lg" className="mb-5">
+				<CardHeader className="flex flex-col gap-0.5 items-center">
+					<Avatar size="lg" className="mb-6">
 						<AvatarFallback>CT</AvatarFallback>
 					</Avatar>
 					<CardTitle className="font-semibold">Conta teste</CardTitle>
