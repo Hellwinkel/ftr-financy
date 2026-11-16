@@ -10,3 +10,13 @@ export type Transaction = {
 	categoryId: string
 	category: Pick<Category, 'id' | 'title' | 'icon' | 'color'> | null
 }
+
+export type CreateTransactionInput = {
+	type: Transaction['type']
+	description: string
+	transactionDate: string
+	value: number
+	categoryId: string
+}
+
+export type UpdateTransactionInput = Partial<CreateTransactionInput>

@@ -1,4 +1,6 @@
+import { useMutation, useQuery } from '@apollo/client/react'
 import { icons, Search, Tag, Trash } from 'lucide-react'
+import { toast } from 'sonner'
 import { CategoryIcon } from '@/components/category-icon'
 import { TransactionDialog } from '@/components/transaction-dialog'
 import { TransactionType } from '@/components/transaction-type'
@@ -31,29 +33,28 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { formatCurrency, formatDate } from '@/lib/format'
+import { DELETE_TRANSACTION } from '@/lib/graphql/mutations/transaction'
+import { LIST_CATEGORIES } from '@/lib/graphql/queries/category'
+import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transaction'
 import type { Category } from '@/types/category'
 import type { Transaction } from '@/types/transaction'
+
+type ListTransactionsQueryData = {
+	listTransactions: Transaction[]
+}
+
+type ListCategoriesQueryData = {
+	listCategories: Category[]
+}
+
+type DeleteTransactionMutationData = {
+	deleteTransaction: boolean
+}
 
 const typeOptions = [
 	{ label: 'Todos', value: 'all' },
 	{ label: 'Entrada', value: 'income' },
 	{ label: 'Saída', value: 'expense' },
-]
-
-const categories: Pick<Category, 'id' | 'title'>[] = [
-	{ id: '6a9dd5f3-923c-45bc-b37d-0204a55d3c9d', title: 'Alimentação' },
-	{ id: '8f268b52-8f54-48fc-95fc-c1ac3ee54d11', title: 'Entretenimento' },
-	{ id: 'd0935278-1e84-4d8a-bfa2-27857d81ecee', title: 'Investimento' },
-	{ id: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6', title: 'Mercado' },
-	{ id: '7d2b1080-6a17-446d-a68a-684e196013d8', title: 'Salário' },
-	{ id: 'bf09de26-834a-4c21-94b9-2e9c11034542', title: 'Saúde' },
-	{ id: 'e02554e2-48ef-4507-bcc7-d2a878badabe', title: 'Transporte' },
-	{ id: '18e657b4-4393-4216-82c9-821d3613659d', title: 'Utilidades' },
-]
-
-const categoryOptions = [
-	{ label: 'Todas', value: 'all' },
-	...categories.map((category) => ({ label: category.title, value: category.id })),
 ]
 
 const periodOptions = [
@@ -63,122 +64,41 @@ const periodOptions = [
 	{ label: 'Setembro / 2025', value: '2025-09' },
 ]
 
-const transactions: Transaction[] = [
-	{
-		id: 'a1e771f0-f315-452e-9d36-99f3587d7823',
-		description: 'Jantar no Restaurante',
-		transactionDate: '2025-11-30',
-		type: 'expense',
-		value: 8950,
-		categoryId: '6a9dd5f3-923c-45bc-b37d-0204a55d3c9d',
-		category: {
-			id: '6a9dd5f3-923c-45bc-b37d-0204a55d3c9d',
-			title: 'Alimentação',
-			icon: 'Utensils',
-			color: 'blue',
-		},
-	},
-	{
-		id: 'ba96660b-62b6-4e14-95dc-77b5846cfb10',
-		description: 'Posto de Gasolina',
-		transactionDate: '2025-11-29',
-		type: 'expense',
-		value: 10000,
-		categoryId: 'e02554e2-48ef-4507-bcc7-d2a878badabe',
-		category: {
-			id: 'e02554e2-48ef-4507-bcc7-d2a878badabe',
-			title: 'Transporte',
-			icon: 'CarFront',
-			color: 'purple',
-		},
-	},
-	{
-		id: 'b1006409-30e5-42fd-a5da-d0b0c49173ca',
-		description: 'Compras no Mercado',
-		transactionDate: '2025-11-28',
-		type: 'expense',
-		value: 15680,
-		categoryId: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6',
-		category: {
-			id: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6',
-			title: 'Mercado',
-			icon: 'ShoppingCart',
-			color: 'orange',
-		},
-	},
-	{
-		id: 'c3d436b5-c0dc-4ea4-983d-e84171254aab',
-		description: 'Retorno de Investimento',
-		transactionDate: '2025-11-26',
-		type: 'income',
-		value: 34025,
-		categoryId: 'd0935278-1e84-4d8a-bfa2-27857d81ecee',
-		category: {
-			id: 'd0935278-1e84-4d8a-bfa2-27857d81ecee',
-			title: 'Investimento',
-			icon: 'PiggyBank',
-			color: 'green',
-		},
-	},
-	{
-		id: 'a8c13d3e-de83-4d58-82b5-ddc19120d53f',
-		description: 'Aluguel',
-		transactionDate: '2025-11-26',
-		type: 'expense',
-		value: 170000,
-		categoryId: '18e657b4-4393-4216-82c9-821d3613659d',
-		category: {
-			id: '18e657b4-4393-4216-82c9-821d3613659d',
-			title: 'Utilidades',
-			icon: 'ToolCase',
-			color: 'yellow',
-		},
-	},
-	{
-		id: 'de508721-52e1-4dfe-9a37-7fc27acb6a84',
-		description: 'Freelance',
-		transactionDate: '2025-11-24',
-		type: 'income',
-		value: 250000,
-		categoryId: '7d2b1080-6a17-446d-a68a-684e196013d8',
-		category: {
-			id: '7d2b1080-6a17-446d-a68a-684e196013d8',
-			title: 'Salário',
-			icon: 'BriefcaseBusiness',
-			color: 'green',
-		},
-	},
-	{
-		id: 'a232e7cd-613c-412a-8e25-25fbf83574df',
-		description: 'Compras Jantar',
-		transactionDate: '2025-11-22',
-		type: 'expense',
-		value: 15000,
-		categoryId: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6',
-		category: {
-			id: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6',
-			title: 'Mercado',
-			icon: 'ShoppingCart',
-			color: 'orange',
-		},
-	},
-	{
-		id: '14fb44ef-4d0b-4b3f-9779-43e84db12438',
-		description: 'Cinema',
-		transactionDate: '2025-11-18',
-		type: 'expense',
-		value: 8800,
-		categoryId: '8f268b52-8f54-48fc-95fc-c1ac3ee54d11',
-		category: {
-			id: '8f268b52-8f54-48fc-95fc-c1ac3ee54d11',
-			title: 'Entretenimento',
-			icon: 'Ticket',
-			color: 'pink',
-		},
-	},
-]
-
 export function Transactions() {
+	const { data: transactionsData } = useQuery<ListTransactionsQueryData>(LIST_TRANSACTIONS)
+	const { data: categoriesData } = useQuery<ListCategoriesQueryData>(LIST_CATEGORIES)
+
+	const transactions = transactionsData?.listTransactions ?? []
+	const categories = categoriesData?.listCategories ?? []
+
+	const categoryOptions = [
+		{ label: 'Todas', value: 'all' },
+		...categories.map((category) => ({ label: category.title, value: category.id })),
+	]
+
+	const [deleteTransaction] = useMutation<DeleteTransactionMutationData, { id: string }>(
+		DELETE_TRANSACTION
+	)
+
+	async function handleDelete(id: string) {
+		const toastId = toast.loading('Removendo transação...')
+
+		try {
+			await deleteTransaction({
+				variables: {
+					id,
+				},
+				refetchQueries: [LIST_TRANSACTIONS, LIST_CATEGORIES],
+			})
+
+			toast.success('Transação removida com sucesso', { id: toastId })
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : 'Erro ao remover transação', {
+				id: toastId,
+			})
+		}
+	}
+
 	return (
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-row items-center justify-between gap-4">
@@ -306,6 +226,7 @@ export function Transactions() {
 											size="icon"
 											title="Remover transação"
 											aria-label="Remover transação"
+											onClick={() => handleDelete(transaction.id)}
 										>
 											<Trash />
 										</Button>

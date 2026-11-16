@@ -1,8 +1,19 @@
+import { useMutation } from '@apollo/client/react'
 import { cn } from 'cn'
 import { Plus, SquarePen } from 'lucide-react'
+import { type SubmitEvent, useState } from 'react'
+import { toast } from 'sonner'
+import { parseCurrency } from '@/lib/format'
+import { CREATE_TRANSACTION, UPDATE_TRANSACTION } from '@/lib/graphql/mutations/transaction'
+import { LIST_CATEGORIES } from '@/lib/graphql/queries/category'
+import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transaction'
 import { transactionTypes } from '@/lib/transaction-types'
 import type { Category } from '@/types/category'
-import type { Transaction } from '@/types/transaction'
+import type {
+	CreateTransactionInput,
+	Transaction,
+	UpdateTransactionInput,
+} from '@/types/transaction'
 import { Button } from './ui/button'
 import {
 	Dialog,
@@ -23,6 +34,14 @@ type TransactionDialogProps = {
 	className?: string
 }
 
+type CreateTransactionMutationData = {
+	createTransaction: Pick<Transaction, 'id'>
+}
+
+type UpdateTransactionMutationData = {
+	updateTransaction: Pick<Transaction, 'id'>
+}
+
 const typeOptions = [
 	{ value: 'expense', label: 'Despesa' },
 	{ value: 'income', label: 'Receita' },
@@ -36,17 +55,100 @@ export function TransactionDialog({
 }: TransactionDialogProps) {
 	const isEditing = !!transaction
 
+	const [open, setOpen] = useState(false)
+	const [type, setType] = useState<Transaction['type']>('expense')
+	const [description, setDescription] = useState('')
+	const [transactionDate, setTransactionDate] = useState('')
+	const [value, setValue] = useState('')
+	const [categoryId, setCategoryId] = useState<string | null>(null)
+
+	const [createTransaction, { loading: creating }] = useMutation<
+		CreateTransactionMutationData,
+		{ data: CreateTransactionInput }
+	>(CREATE_TRANSACTION)
+
+	const [updateTransaction, { loading: updating }] = useMutation<
+		UpdateTransactionMutationData,
+		{ id: string; data: UpdateTransactionInput }
+	>(UPDATE_TRANSACTION)
+
+	const loading = creating || updating
+
 	const categoryOptions = categories.map((category) => ({
 		label: category.title,
 		value: category.id,
 	}))
 
-	const defaultValue = isEditing
-		? (transaction.value / 100).toFixed(2).replace('.', ',')
-		: undefined
+	function handleOpenChange(nextOpen: boolean) {
+		if (nextOpen) {
+			setType(transaction?.type ?? 'expense')
+			setDescription(transaction?.description ?? '')
+			setTransactionDate(transaction?.transactionDate ?? '')
+			setValue(transaction ? (transaction.value / 100).toFixed(2).replace('.', ',') : '')
+			setCategoryId(transaction?.categoryId ?? null)
+		}
+
+		setOpen(nextOpen)
+	}
+
+	async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+		event.preventDefault()
+
+		const parsedValue = parseCurrency(value)
+
+		if (Number.isNaN(parsedValue) || parsedValue <= 0) {
+			toast.error('Informe um valor válido')
+			return
+		}
+
+		if (!categoryId) {
+			toast.error('É preciso selecionar uma categoria')
+			return
+		}
+
+		const data = {
+			type,
+			description: description.trim(),
+			transactionDate,
+			value: parsedValue,
+			categoryId,
+		}
+
+		const toastId = toast.loading('Salvando transação...')
+
+		try {
+			if (transaction) {
+				await updateTransaction({
+					variables: {
+						id: transaction.id,
+						data,
+					},
+					refetchQueries: [LIST_TRANSACTIONS, LIST_CATEGORIES],
+				})
+			} else {
+				await createTransaction({
+					variables: {
+						data,
+					},
+					refetchQueries: [LIST_TRANSACTIONS, LIST_CATEGORIES],
+				})
+			}
+
+			toast.success(
+				isEditing ? 'Transação atualizada com sucesso' : 'Transação criada com sucesso',
+				{ id: toastId }
+			)
+
+			setOpen(false)
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : 'Erro ao salvar transação', {
+				id: toastId,
+			})
+		}
+	}
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={handleOpenChange}>
 			{isEditing ? (
 				<DialogTrigger
 					render={
@@ -84,8 +186,11 @@ export function TransactionDialog({
 					</DialogDescription>
 				</DialogHeader>
 
-				<form className="flex flex-col gap-6">
-					<fieldset className="flex rounded-xl p-2 inset-shadow-[0_0_0_1px] inset-shadow-gray-200">
+				<form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+					<fieldset
+						className="flex rounded-xl p-2 inset-shadow-[0_0_0_1px] inset-shadow-gray-200"
+						disabled={loading}
+					>
 						<legend className="sr-only">Tipo</legend>
 
 						{typeOptions.map((option) => {
@@ -103,8 +208,9 @@ export function TransactionDialog({
 										type="radio"
 										name="type"
 										value={option.value}
-										defaultChecked={option.value === (transaction?.type ?? 'expense')}
 										className="sr-only"
+										checked={type === option.value}
+										onChange={() => setType(option.value)}
 									/>
 									<Icon />
 									{option.label}
@@ -120,8 +226,10 @@ export function TransactionDialog({
 								id="description"
 								name="description"
 								placeholder="Ex. Almoço no restaurante"
-								defaultValue={transaction?.description}
 								required
+								value={description}
+								onChange={(event) => setDescription(event.target.value)}
+								disabled={loading}
 							/>
 						</Field>
 
@@ -132,8 +240,10 @@ export function TransactionDialog({
 									type="date"
 									id="transactionDate"
 									name="transactionDate"
-									defaultValue={transaction?.transactionDate}
 									required
+									value={transactionDate}
+									onChange={(event) => setTransactionDate(event.target.value)}
+									disabled={loading}
 								/>
 							</Field>
 
@@ -145,8 +255,10 @@ export function TransactionDialog({
 									inputMode="decimal"
 									prefix="R$"
 									placeholder="0,00"
-									defaultValue={defaultValue}
 									required
+									value={value}
+									onChange={(event) => setValue(event.target.value)}
+									disabled={loading}
 								/>
 							</Field>
 						</div>
@@ -155,8 +267,10 @@ export function TransactionDialog({
 							<FieldLabel htmlFor="categoryId">Categoria</FieldLabel>
 							<Select
 								items={categoryOptions}
-								defaultValue={transaction?.categoryId}
 								name="categoryId"
+								value={categoryId}
+								onValueChange={(newCategory) => setCategoryId(newCategory)}
+								disabled={loading}
 							>
 								<SelectTrigger id="categoryId">
 									<SelectValue placeholder="Selecione" />
@@ -173,7 +287,7 @@ export function TransactionDialog({
 						</Field>
 					</div>
 
-					<Button type="submit" className="w-full">
+					<Button type="submit" className="w-full" disabled={loading}>
 						Salvar
 					</Button>
 				</form>

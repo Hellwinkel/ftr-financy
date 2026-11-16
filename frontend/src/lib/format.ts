@@ -32,3 +32,9 @@ export function getInitials(name: string) {
 
 	return (first + last).toUpperCase()
 }
+
+export function parseCurrency(value: string) {
+	const normalized = value.includes(',') ? value.replace(/\./g, '').replace(',', '.') : value
+
+	return Math.round(Number(normalized) * 100)
+}

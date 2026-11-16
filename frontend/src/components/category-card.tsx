@@ -3,6 +3,7 @@ import { icons, Tag, Trash } from 'lucide-react'
 import { toast } from 'sonner'
 import { DELETE_CATEGORY } from '@/lib/graphql/mutations/category'
 import { LIST_CATEGORIES } from '@/lib/graphql/queries/category'
+import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transaction'
 import type { Category } from '@/types/category'
 import { CategoryDialog } from './category-dialog'
 import { CategoryIcon } from './category-icon'
@@ -30,7 +31,7 @@ export function CategoryCard(category: Category) {
 				variables: {
 					id,
 				},
-				refetchQueries: [LIST_CATEGORIES],
+				refetchQueries: [LIST_CATEGORIES, LIST_TRANSACTIONS],
 			})
 
 			toast.success('Categoria removida com sucesso', { id: toastId })
