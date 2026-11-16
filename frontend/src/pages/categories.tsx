@@ -1,79 +1,21 @@
+import { useQuery } from '@apollo/client/react'
 import { ArrowUpDown, icons, SquareStar, Tag } from 'lucide-react'
 import { CategoryCard } from '@/components/category-card'
 import { CategoryDialog } from '@/components/category-dialog'
 import { CategorySummaryCard } from '@/components/category-summary-card'
+import { LIST_CATEGORIES } from '@/lib/graphql/queries/category'
 import type { Category } from '@/types/category'
 
-const categories: Category[] = [
-	{
-		id: '6a9dd5f3-923c-45bc-b37d-0204a55d3c9d',
-		title: 'Alimentação',
-		description: 'Restaurantes, delivery e refeições',
-		icon: 'Utensils',
-		color: 'blue',
-		countTransactions: 12,
-	},
-	{
-		id: '8f268b52-8f54-48fc-95fc-c1ac3ee54d11',
-		title: 'Entretenimento',
-		description: 'Cinema, jogos e lazer',
-		icon: 'Ticket',
-		color: 'pink',
-		countTransactions: 2,
-	},
-	{
-		id: 'd0935278-1e84-4d8a-bfa2-27857d81ecee',
-		title: 'Investimento',
-		description: 'Aplicações e retornos financeiros',
-		icon: 'PiggyBank',
-		color: 'green',
-		countTransactions: 1,
-	},
-	{
-		id: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6',
-		title: 'Mercado',
-		description: 'Compras de supermercado e mantimentos',
-		icon: 'ShoppingCart',
-		color: 'orange',
-		countTransactions: 3,
-	},
-	{
-		id: '7d2b1080-6a17-446d-a68a-684e196013d8',
-		title: 'Salário',
-		description: 'Renda mensal e bonificações',
-		icon: 'BriefcaseBusiness',
-		color: 'green',
-		countTransactions: 3,
-	},
-	{
-		id: 'bf09de26-834a-4c21-94b9-2e9c11034542',
-		title: 'Saúde',
-		description: 'Medicamentos, consulta e exames',
-		icon: 'HeartPulse',
-		color: 'red',
-		countTransactions: 0,
-	},
-	{
-		id: 'e02554e2-48ef-4507-bcc7-d2a878badabe',
-		title: 'Transporte',
-		description: 'Gasolina, transporte público e viagens',
-		icon: 'CarFront',
-		color: 'purple',
-		countTransactions: 8,
-	},
-	{
-		id: '18e657b4-4393-4216-82c9-821d3613659d',
-		title: 'Utilidades',
-		description: 'Energia, água, internet e telefone',
-		icon: 'ToolCase',
-		color: 'yellow',
-		countTransactions: 7,
-	},
-]
+type ListCategoriesQueryData = {
+	listCategories: Category[]
+}
 
 export function Categories() {
+	const { data } = useQuery<ListCategoriesQueryData>(LIST_CATEGORIES)
+	const categories = data?.listCategories ?? []
+
 	const totalCategories = categories.length
-	const totalTransactions = categories?.reduce(
+	const totalTransactions = categories.reduce(
 		(sum, category) => sum + (category.countTransactions ?? 0),
 		0
 	)
