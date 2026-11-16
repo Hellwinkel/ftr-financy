@@ -1,12 +1,42 @@
 import { Lock, Mail, UserRoundPlus } from 'lucide-react'
+import { type SubmitEvent, useState } from 'react'
 import { Link } from 'react-router'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { useAuthStore } from '@/stores/auth'
 
 export function Login() {
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [loading, setLoading] = useState(false)
+
+	const login = useAuthStore((state) => state.login)
+
+	async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+		event.preventDefault()
+		setLoading(true)
+
+		const toastId = toast.loading('Confirmando credenciais...')
+
+		try {
+			const isLoggedIn = await login({ email, password })
+
+			if (isLoggedIn) {
+				toast.success('Login realizado com sucesso', { id: toastId })
+			}
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : 'Erro ao fazer login', {
+				id: toastId,
+			})
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	return (
 		<Card className="w-11/12 max-w-md">
 			<CardHeader className="text-center items-center">
@@ -15,7 +45,7 @@ export function Login() {
 			</CardHeader>
 
 			<CardContent>
-				<form className="flex flex-col gap-4">
+				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 					<Field>
 						<FieldLabel htmlFor="email">E-mail</FieldLabel>
 						<Input
@@ -26,6 +56,9 @@ export function Login() {
 							placeholder="mail@exemplo.com"
 							required
 							icon={Mail}
+							value={email}
+							onChange={(event) => setEmail(event.target.value)}
+							disabled={loading}
 						/>
 					</Field>
 
@@ -39,12 +72,15 @@ export function Login() {
 							placeholder="Digite sua senha"
 							required
 							icon={Lock}
+							value={password}
+							onChange={(event) => setPassword(event.target.value)}
+							disabled={loading}
 						/>
 					</Field>
 
 					<div className="flex flex-wrap gap-4 items-center justify-between">
 						<Field>
-							<Checkbox id="remember" name="remember" />
+							<Checkbox id="remember" name="remember" disabled={loading} />
 							<FieldLabel htmlFor="remember">Lembrar-me</FieldLabel>
 						</Field>
 
@@ -54,7 +90,7 @@ export function Login() {
 						</a>
 					</div>
 
-					<Button type="submit" className="w-full mt-2">
+					<Button type="submit" className="w-full mt-2" disabled={loading}>
 						Entrar
 					</Button>
 				</form>

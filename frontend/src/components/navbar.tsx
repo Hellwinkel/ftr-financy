@@ -1,8 +1,12 @@
 import { Link, NavLink } from 'react-router'
 import logo from '@/assets/logo.svg'
+import { getInitials } from '@/lib/format'
+import { useAuthStore } from '@/stores/auth'
 import { Avatar, AvatarFallback } from './ui/avatar'
 
 export function Navbar() {
+	const user = useAuthStore((state) => state.user)
+
 	return (
 		<header className="bg-white border-b border-gray-200 ">
 			<div className="w-11/12 max-w-7xl mx-auto py-4 grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
@@ -32,7 +36,7 @@ export function Navbar() {
 
 				<Link to="/perfil" className="justify-self-end" title="Editar perfil">
 					<Avatar>
-						<AvatarFallback>CT</AvatarFallback>
+						<AvatarFallback>{getInitials(user?.name ?? '')}</AvatarFallback>
 					</Avatar>
 				</Link>
 			</div>
