@@ -1,5 +1,6 @@
-import { icons, Plus, Search, SquarePen, Tag, Trash } from 'lucide-react'
+import { icons, Search, Tag, Trash } from 'lucide-react'
 import { CategoryIcon } from '@/components/category-icon'
+import { TransactionDialog } from '@/components/transaction-dialog'
 import { TransactionType } from '@/components/transaction-type'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -30,6 +31,7 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { formatCurrency, formatDate } from '@/lib/format'
+import type { Category } from '@/types/category'
 import type { Transaction } from '@/types/transaction'
 
 const typeOptions = [
@@ -38,16 +40,20 @@ const typeOptions = [
 	{ label: 'Saída', value: 'expense' },
 ]
 
+const categories: Pick<Category, 'id' | 'title'>[] = [
+	{ id: '6a9dd5f3-923c-45bc-b37d-0204a55d3c9d', title: 'Alimentação' },
+	{ id: '8f268b52-8f54-48fc-95fc-c1ac3ee54d11', title: 'Entretenimento' },
+	{ id: 'd0935278-1e84-4d8a-bfa2-27857d81ecee', title: 'Investimento' },
+	{ id: '3d2097ba-76a4-4f2f-acf2-cccf6c75e2f6', title: 'Mercado' },
+	{ id: '7d2b1080-6a17-446d-a68a-684e196013d8', title: 'Salário' },
+	{ id: 'bf09de26-834a-4c21-94b9-2e9c11034542', title: 'Saúde' },
+	{ id: 'e02554e2-48ef-4507-bcc7-d2a878badabe', title: 'Transporte' },
+	{ id: '18e657b4-4393-4216-82c9-821d3613659d', title: 'Utilidades' },
+]
+
 const categoryOptions = [
 	{ label: 'Todas', value: 'all' },
-	{ label: 'Alimentação', value: 'alimentacao' },
-	{ label: 'Entretenimento', value: 'entretenimento' },
-	{ label: 'Investimento', value: 'investimento' },
-	{ label: 'Mercado', value: 'mercado' },
-	{ label: 'Salário', value: 'salario' },
-	{ label: 'Saúde', value: 'saude' },
-	{ label: 'Transporte', value: 'transporte' },
-	{ label: 'Utilidades', value: 'utilidades' },
+	...categories.map((category) => ({ label: category.title, value: category.id })),
 ]
 
 const periodOptions = [
@@ -181,10 +187,7 @@ export function Transactions() {
 					<p className="text-gray-600">Gerencie todas as suas transações financeiras</p>
 				</div>
 
-				<Button size="sm">
-					<Plus />
-					Nova transação
-				</Button>
+				<TransactionDialog categories={categories} />
 			</div>
 
 			<Card size="sm" className="flex-row gap-4 items-start pt-5">
@@ -296,28 +299,18 @@ export function Transactions() {
 										{transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.value)}
 									</TableCell>
 
-									<TableCell className="flex justify-end gap-2">
+									<TableCell className="flex justify-end items-center gap-2">
 										<Button
 											type="button"
 											variant="destructive"
 											size="icon"
 											title="Remover transação"
 											aria-label="Remover transação"
-											className="self-center"
 										>
 											<Trash />
 										</Button>
 
-										<Button
-											type="button"
-											variant="outline"
-											size="icon"
-											title="Editar transação"
-											aria-label="Editar transação"
-											className="self-center"
-										>
-											<SquarePen />
-										</Button>
+										<TransactionDialog categories={categories} transaction={transaction} />
 									</TableCell>
 								</TableRow>
 							)

@@ -1,7 +1,7 @@
 import { ArrowUpDown, icons, SquareStar, Tag } from 'lucide-react'
 import { CategoryCard } from '@/components/category-card'
+import { CategoryDialog } from '@/components/category-dialog'
 import { CategorySummaryCard } from '@/components/category-summary-card'
-import { NewCategoryDialog } from '@/components/new-category-dialog'
 import type { Category } from '@/types/category'
 
 const categories: Category[] = [
@@ -89,7 +89,7 @@ export function Categories() {
 					<p className="text-gray-600">Organize suas transações por categorias</p>
 				</div>
 
-				<NewCategoryDialog />
+				<CategoryDialog />
 			</div>
 
 			<div className="flex flex-row flex-wrap gap-6">

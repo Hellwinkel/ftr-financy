@@ -1,20 +1,22 @@
+import { cn } from 'cn'
 import {
 	ChevronRight,
 	CircleArrowDown,
 	CircleArrowUp,
 	icons,
 	type LucideIcon,
-	Plus,
 	Wallet,
 } from 'lucide-react'
 import { Link } from 'react-router'
 import { CategoryIcon } from '@/components/category-icon'
 import { DashboardSummaryCard } from '@/components/dashboard-summary-card'
 import { SectionTitle } from '@/components/section-title'
+import { TransactionDialog } from '@/components/transaction-dialog'
 import { Badge, type BadgeVariant } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import type { CategoryColor } from '@/lib/category-colors'
 import { formatCurrency, formatDate } from '@/lib/format'
+import { transactionTypes } from '@/lib/transaction-types'
 
 const recentTransactions = [
 	{
@@ -77,7 +79,7 @@ const recentTransactions = [
 			title: 'Investimento',
 		},
 	},
-]
+] as const
 
 const userCategories = [
 	{
@@ -156,6 +158,7 @@ export function Dashboard() {
 						<ul>
 							{recentTransactions?.map((item) => {
 								const Icon: LucideIcon | undefined = icons[item.category.icon as keyof typeof icons]
+								const TypeIcon = transactionTypes[item.type].icon
 								const transactionDate = formatDate(item.transactionDate)
 
 								return (
@@ -192,21 +195,20 @@ export function Dashboard() {
 												<p className="text-gray-800 text-sm font-semibold text-right text-nowrap">
 													{item.type === 'income' ? '+' : '-'} {formatCurrency(item.value)}
 												</p>
-												{item.type === 'income' ? (
-													<CircleArrowUp className="shrink-0 size-4 text-brand-base" />
-												) : (
-													<CircleArrowDown className="shrink-0 size-4 text-red-base" />
-												)}
+												<TypeIcon
+													className={cn('shrink-0 size-4', transactionTypes[item.type].iconColor)}
+												/>
 											</div>
 										)}
 									</li>
 								)
 							})}
 						</ul>
-						<button type="button" className="text-link justify-center px-6 py-5">
-							<Plus className="size-5" />
-							Nova transação
-						</button>
+						<TransactionDialog
+							categories={userCategories}
+							variant="link"
+							className="justify-center px-6 py-5"
+						/>
 					</CardContent>
 				</Card>
 

@@ -5,9 +5,13 @@ import * as React from 'react'
 
 type InputProps = React.ComponentProps<'input'> & {
 	icon?: LucideIcon
+	prefix?: string
 }
 
-function Input({ className, type, icon: Icon, ...props }: InputProps) {
+const inputAddonClassName =
+	'pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-700 peer-placeholder-shown:text-gray-400 peer-focus:text-brand-base peer-aria-invalid:text-danger! peer-disabled:opacity-50'
+
+function Input({ className, type, icon: Icon, prefix, ...props }: InputProps) {
 	const [showPassword, setShowPassword] = React.useState(false)
 	const isPassword = type === 'password'
 
@@ -22,16 +26,16 @@ function Input({ className, type, icon: Icon, ...props }: InputProps) {
 				data-slot="input"
 				className={cn(
 					'peer h-12 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3.5 text-base text-gray-800 caret-brand-base outline-none placeholder:text-gray-400 disabled:pointer-events-none disabled:cursor-auto disabled:opacity-50',
-					Icon && 'pl-10.5',
+					(Icon || prefix) && 'pl-10.5',
 					isPassword && 'pr-10.5',
 					className
 				)}
 				{...props}
 			/>
 
-			{Icon && (
-				<Icon className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-gray-700 peer-placeholder-shown:text-gray-400 peer-focus:text-brand-base peer-aria-invalid:text-danger! peer-disabled:opacity-50" />
-			)}
+			{Icon && <Icon className={cn(inputAddonClassName, 'size-4')} />}
+
+			{prefix && <span className={cn(inputAddonClassName, 'text-base')}>{prefix}</span>}
 
 			{isPassword && (
 				<button

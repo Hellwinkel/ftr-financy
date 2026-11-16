@@ -1,6 +1,7 @@
 import { cn } from 'cn'
-import { icons, Plus } from 'lucide-react'
+import { icons, Plus, SquarePen } from 'lucide-react'
 import { type CategoryColor, categoryColors } from '@/lib/category-colors'
+import type { Category } from '@/types/category'
 import { Button } from './ui/button'
 import {
 	Dialog,
@@ -42,25 +43,56 @@ const colorOptions: { value: CategoryColor; label: string }[] = [
 	{ value: 'yellow', label: 'Amarelo' },
 ]
 
-export function NewCategoryDialog() {
+type CategoryDialogProps = {
+	category?: Category
+}
+
+export function CategoryDialog({ category }: CategoryDialogProps) {
+	const isEditing = !!category
+
 	return (
 		<Dialog>
-			<DialogTrigger render={<Button size="sm" />}>
-				<Plus />
-				Nova categoria
-			</DialogTrigger>
+			{isEditing ? (
+				<DialogTrigger
+					render={
+						<Button
+							type="button"
+							variant="outline"
+							size="icon"
+							title="Editar categoria"
+							aria-label="Editar categoria"
+						/>
+					}
+				>
+					<SquarePen />
+				</DialogTrigger>
+			) : (
+				<DialogTrigger render={<Button size="sm" />}>
+					<Plus />
+					Nova categoria
+				</DialogTrigger>
+			)}
 
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Nova categoria</DialogTitle>
-					<DialogDescription>Organize suas transações com categorias</DialogDescription>
+					<DialogTitle>{isEditing ? 'Editar categoria' : 'Nova categoria'}</DialogTitle>
+					<DialogDescription>
+						{isEditing ? 'Altere os dados da categoria' : 'Organize suas transações com categorias'}
+					</DialogDescription>
 				</DialogHeader>
 
 				<form className="flex flex-col gap-6">
 					<div className="flex flex-col gap-4">
 						<Field>
 							<FieldLabel htmlFor="title">Título</FieldLabel>
-							<Input type="text" name="title" id="title" placeholder="Ex. Alimentação" required />
+							<Input
+								type="text"
+								name="title"
+								id="title"
+								placeholder="Ex. Alimentação"
+								defaultValue={category?.title}
+								required
+							/>
 						</Field>
 
 						<Field>
@@ -70,6 +102,7 @@ export function NewCategoryDialog() {
 								name="description"
 								id="description"
 								placeholder="Descrição da categoria"
+								defaultValue={category?.description ?? undefined}
 							/>
 							<FieldDescription>Opcional</FieldDescription>
 						</Field>
@@ -91,6 +124,7 @@ export function NewCategoryDialog() {
 												value={name}
 												aria-label={name}
 												className="sr-only"
+												defaultChecked={name === category?.icon}
 											/>
 											<Icon className="size-5" />
 										</label>
@@ -112,8 +146,9 @@ export function NewCategoryDialog() {
 												type="radio"
 												name="color"
 												value={color.value}
-												aria-label={color.value}
+												aria-label={color.label}
 												className="sr-only"
+												defaultChecked={color.value === category?.color}
 											/>
 											<span
 												className={cn(

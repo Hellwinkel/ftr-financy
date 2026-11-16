@@ -1,11 +1,13 @@
-import { icons, SquarePen, Tag, Trash } from 'lucide-react'
+import { icons, Tag, Trash } from 'lucide-react'
 import type { Category } from '@/types/category'
+import { CategoryDialog } from './category-dialog'
 import { CategoryIcon } from './category-icon'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
 
-export function CategoryCard({ title, description, icon, color, countTransactions }: Category) {
+export function CategoryCard(category: Category) {
+	const { title, description, icon, color, countTransactions } = category
 	const Icon = icons[icon as keyof typeof icons] ?? Tag
 
 	return (
@@ -23,22 +25,14 @@ export function CategoryCard({ title, description, icon, color, countTransaction
 					>
 						<Trash />
 					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						size="icon"
-						title="Editar categoria"
-						aria-label="Editar categoria"
-					>
-						<SquarePen />
-					</Button>
+					<CategoryDialog category={category} />
 				</div>
 			</div>
 
 			<div className="flex flex-col gap-1">
 				<h2 className="font-semibold text-gray-800">{title}</h2>
 				{description && (
-					<p className="text-sm leading-5 text-gray-600 line-clamp-3">{description}</p>
+					<p className="text-sm leading-5 text-gray-600 line-clamp-2">{description}</p>
 				)}
 			</div>
 
