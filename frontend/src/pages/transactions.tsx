@@ -60,13 +60,6 @@ const typeOptions = [
 
 const ITEMS_PER_PAGE = 10
 
-const periodOptions = [
-	{ label: 'Todos', value: 'all' },
-	{ label: 'Novembro / 2025', value: '2025-11' },
-	{ label: 'Outubro / 2025', value: '2025-10' },
-	{ label: 'Setembro / 2025', value: '2025-09' },
-]
-
 const monthNames = [
 	'Janeiro',
 	'Fevereiro',
