@@ -3,7 +3,7 @@ import { cn } from 'cn'
 import { Plus, SquarePen } from 'lucide-react'
 import { type SubmitEvent, useState } from 'react'
 import { toast } from 'sonner'
-import { parseCurrency } from '@/lib/format'
+import { parseCurrency, parseDateString, toDateString } from '@/lib/format'
 import { CREATE_TRANSACTION, UPDATE_TRANSACTION } from '@/lib/graphql/mutations/transaction'
 import { LIST_CATEGORIES } from '@/lib/graphql/queries/category'
 import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transaction'
@@ -15,6 +15,7 @@ import type {
 	UpdateTransactionInput,
 } from '@/types/transaction'
 import { Button } from './ui/button'
+import { Calendar } from './ui/calendar'
 import {
 	Dialog,
 	DialogContent,
@@ -25,6 +26,7 @@ import {
 } from './ui/dialog'
 import { Field, FieldLabel } from './ui/field'
 import { Input } from './ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 type TransactionDialogProps = {
@@ -61,6 +63,7 @@ export function TransactionDialog({
 	const [transactionDate, setTransactionDate] = useState('')
 	const [value, setValue] = useState('')
 	const [categoryId, setCategoryId] = useState<string | null>(null)
+	const [calendarOpen, setCalendarOpen] = useState(false)
 
 	const [createTransaction, { loading: creating }] = useMutation<
 		CreateTransactionMutationData,
@@ -78,6 +81,8 @@ export function TransactionDialog({
 		label: category.title,
 		value: category.id,
 	}))
+
+	const selectedDate = transactionDate ? parseDateString(transactionDate) : undefined
 
 	function handleOpenChange(nextOpen: boolean) {
 		if (nextOpen) {
@@ -105,6 +110,11 @@ export function TransactionDialog({
 		if (Number.isNaN(parsedValue) || parsedValue <= 0) {
 			toast.error('Informe um valor válido')
 			setValue('')
+			return
+		}
+
+		if (!transactionDate) {
+			toast.error('É preciso selecionar uma data')
 			return
 		}
 
@@ -243,15 +253,38 @@ export function TransactionDialog({
 						<div className="grid grid-cols-2 gap-4">
 							<Field>
 								<FieldLabel htmlFor="transactionDate">Data</FieldLabel>
-								<Input
-									type="date"
-									id="transactionDate"
-									name="transactionDate"
-									required
-									value={transactionDate}
-									onChange={(event) => setTransactionDate(event.target.value)}
-									disabled={loading}
-								/>
+								<Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+									<PopoverTrigger
+										id="transactionDate"
+										disabled={loading}
+										render={
+											<button
+												type="button"
+												className="flex h-12 w-full items-center rounded-lg border border-gray-300 bg-white px-3.5 text-left text-base text-gray-800 outline-none cursor-pointer data-disabled:cursor-not-allowed data-disabled:opacity-50"
+											/>
+										}
+									>
+										{selectedDate ? (
+											selectedDate.toLocaleDateString('pt-BR')
+										) : (
+											<span className="text-gray-400">Selecione</span>
+										)}
+									</PopoverTrigger>
+
+									<PopoverContent>
+										<Calendar
+											mode="single"
+											selected={selectedDate}
+											defaultMonth={selectedDate}
+											onSelect={(date) => {
+												if (date) {
+													setTransactionDate(toDateString(date))
+													setCalendarOpen(false)
+												}
+											}}
+										/>
+									</PopoverContent>
+								</Popover>
 							</Field>
 
 							<Field>
