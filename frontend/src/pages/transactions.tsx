@@ -58,6 +58,8 @@ const typeOptions = [
 	{ label: 'Saída', value: 'expense' },
 ]
 
+const ITEMS_PER_PAGE = 10
+
 const periodOptions = [
 	{ label: 'Todos', value: 'all' },
 	{ label: 'Novembro / 2025', value: '2025-11' },
@@ -97,6 +99,7 @@ export function Transactions() {
 	const [typeFilter, setTypeFilter] = useState('all')
 	const [categoryFilter, setCategoryFilter] = useState('all')
 	const [periodFilter, setPeriodFilter] = useState('all')
+	const [page, setPage] = useState(1)
 
 	const categoryOptions = [
 		{ label: 'Todas', value: 'all' },
@@ -123,6 +126,12 @@ export function Transactions() {
 
 		return resultsFromSearch && resultsFromType && resultsFromCategories && resultsFromPeriod
 	})
+
+	const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE))
+	const currentPage = Math.min(page, totalPages)
+	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+	const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+	const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
 
 	const [deleteTransaction] = useMutation<DeleteTransactionMutationData, { id: string }>(
 		DELETE_TRANSACTION
@@ -168,7 +177,10 @@ export function Transactions() {
 						icon={Search}
 						placeholder="Buscar por descrição"
 						value={search}
-						onChange={(event) => setSearch(event.target.value)}
+						onChange={(event) => {
+							setSearch(event.target.value)
+							setPage(1)
+						}}
 					/>
 				</Field>
 
@@ -179,7 +191,10 @@ export function Transactions() {
 						defaultValue="all"
 						name="type"
 						value={typeFilter}
-						onValueChange={(value) => setTypeFilter(value ?? 'all')}
+						onValueChange={(value) => {
+							setTypeFilter(value ?? 'all')
+							setPage(1)
+						}}
 					>
 						<SelectTrigger id="type">
 							<SelectValue />
@@ -201,7 +216,10 @@ export function Transactions() {
 						defaultValue="all"
 						name="category"
 						value={categoryFilter}
-						onValueChange={(value) => setCategoryFilter(value ?? 'all')}
+						onValueChange={(value) => {
+							setCategoryFilter(value ?? 'all')
+							setPage(1)
+						}}
 					>
 						<SelectTrigger id="category">
 							<SelectValue />
@@ -223,7 +241,10 @@ export function Transactions() {
 						defaultValue="all"
 						name="period"
 						value={periodFilter}
-						onValueChange={(value) => setPeriodFilter(value ?? 'all')}
+						onValueChange={(value) => {
+							setPeriodFilter(value ?? 'all')
+							setPage(1)
+						}}
 					>
 						<SelectTrigger id="period">
 							<SelectValue />
@@ -253,7 +274,7 @@ export function Transactions() {
 					</TableHeader>
 
 					<TableBody>
-						{filteredTransactions.map((transaction) => {
+						{paginatedTransactions.map((transaction) => {
 							const Icon = icons[transaction.category?.icon as keyof typeof icons] ?? Tag
 
 							return (
@@ -309,20 +330,36 @@ export function Transactions() {
 
 				<div className="flex items-center justify-between px-6 py-5 text-sm text-gray-700">
 					<p>
-						<strong className="font-medium">1</strong> a <strong className="font-medium">8</strong>{' '}
-						| <strong className="font-medium">8</strong> resultados
+						<strong className="font-medium">
+							{paginatedTransactions.length > 0 ? startIndex + 1 : 0}
+						</strong>{' '}
+						a <strong className="font-medium">{startIndex + paginatedTransactions.length}</strong> |{' '}
+						<strong className="font-medium">{filteredTransactions.length}</strong> resultados
 					</p>
 
 					<Pagination>
 						<PaginationContent>
 							<PaginationItem>
-								<PaginationPrevious disabled />
+								<PaginationPrevious
+									disabled={currentPage === 1}
+									onClick={() => setPage(currentPage - 1)}
+								/>
 							</PaginationItem>
+							{pages.map((pageNumber) => (
+								<PaginationItem key={pageNumber}>
+									<PaginationLink
+										isActive={currentPage === pageNumber}
+										onClick={() => setPage(pageNumber)}
+									>
+										{pageNumber}
+									</PaginationLink>
+								</PaginationItem>
+							))}
 							<PaginationItem>
-								<PaginationLink isActive>1</PaginationLink>
-							</PaginationItem>
-							<PaginationItem>
-								<PaginationNext disabled />
+								<PaginationNext
+									disabled={currentPage === totalPages}
+									onClick={() => setPage(currentPage + 1)}
+								/>
 							</PaginationItem>
 						</PaginationContent>
 					</Pagination>
