@@ -223,6 +223,11 @@ export function Transactions() {
 									{option.label}
 								</SelectItem>
 							))}
+							{categories.length === 0 && (
+								<SelectItem value="empty" disabled>
+									Nenhuma categoria cadastrada
+								</SelectItem>
+							)}
 						</SelectContent>
 					</Select>
 				</Field>
@@ -248,6 +253,11 @@ export function Transactions() {
 									{option.label}
 								</SelectItem>
 							))}
+							{periods.length === 0 && (
+								<SelectItem value="empty" disabled>
+									Nenhum período disponível
+								</SelectItem>
+							)}
 						</SelectContent>
 					</Select>
 				</Field>

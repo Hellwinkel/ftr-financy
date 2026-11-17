@@ -282,6 +282,11 @@ export function TransactionDialog({
 											{option.label}
 										</SelectItem>
 									))}
+									{categoryOptions.length === 0 && (
+										<SelectItem value="empty" disabled>
+											Nenhuma categoria cadastrada
+										</SelectItem>
+									)}
 								</SelectContent>
 							</Select>
 						</Field>
