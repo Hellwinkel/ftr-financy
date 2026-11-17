@@ -19,7 +19,16 @@ const authLink = new SetContextLink((prevContext) => {
 
 export const apolloClient = new ApolloClient({
 	link: ApolloLink.from([authLink, httpLink]),
-	cache: new InMemoryCache(),
+	cache: new InMemoryCache({
+		typePolicies: {
+			Query: {
+				fields: {
+					listTransactions: { merge: false },
+					listCategories: { merge: false },
+				},
+			},
+		},
+	}),
 	defaultOptions: {
 		watchQuery: {
 			fetchPolicy: 'cache-and-network',
