@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react'
 import { icons, Search, Tag, Trash } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { CategoryIcon } from '@/components/category-icon'
 import { TransactionDialog } from '@/components/transaction-dialog'
@@ -64,6 +65,27 @@ const periodOptions = [
 	{ label: 'Setembro / 2025', value: '2025-09' },
 ]
 
+const monthNames = [
+	'Janeiro',
+	'Fevereiro',
+	'Março',
+	'Abril',
+	'Maio',
+	'Junho',
+	'Julho',
+	'Agosto',
+	'Setembro',
+	'Outubro',
+	'Novembro',
+	'Dezembro',
+]
+
+function formatPeriod(period: string) {
+	const [year, month] = period.split('-')
+
+	return `${monthNames[Number(month) - 1]} / ${year}`
+}
+
 export function Transactions() {
 	const { data: transactionsData } = useQuery<ListTransactionsQueryData>(LIST_TRANSACTIONS)
 	const { data: categoriesData } = useQuery<ListCategoriesQueryData>(LIST_CATEGORIES)
@@ -71,10 +93,36 @@ export function Transactions() {
 	const transactions = transactionsData?.listTransactions ?? []
 	const categories = categoriesData?.listCategories ?? []
 
+	const [search, setSearch] = useState('')
+	const [typeFilter, setTypeFilter] = useState('all')
+	const [categoryFilter, setCategoryFilter] = useState('all')
+	const [periodFilter, setPeriodFilter] = useState('all')
+
 	const categoryOptions = [
 		{ label: 'Todas', value: 'all' },
 		...categories.map((category) => ({ label: category.title, value: category.id })),
 	]
+
+	const months = transactions.map((transaction) => transaction.transactionDate.slice(0, 7))
+	const periods = months.filter((month, index) => months.indexOf(month) === index)
+
+	const periodOptions = [
+		{ label: 'Todos', value: 'all' },
+		...periods.map((period) => ({ label: formatPeriod(period), value: period })),
+	]
+
+	const filteredTransactions = transactions.filter((transaction) => {
+		const resultsFromSearch = transaction.description
+			.toLowerCase()
+			.includes(search.trim().toLocaleLowerCase())
+		const resultsFromType = typeFilter === 'all' || transaction.type === typeFilter
+		const resultsFromCategories =
+			categoryFilter === 'all' || transaction.categoryId === categoryFilter
+		const resultsFromPeriod =
+			periodFilter === 'all' || transaction.transactionDate.startsWith(periodFilter)
+
+		return resultsFromSearch && resultsFromType && resultsFromCategories && resultsFromPeriod
+	})
 
 	const [deleteTransaction] = useMutation<DeleteTransactionMutationData, { id: string }>(
 		DELETE_TRANSACTION
@@ -119,12 +167,20 @@ export function Transactions() {
 						id="search"
 						icon={Search}
 						placeholder="Buscar por descrição"
+						value={search}
+						onChange={(event) => setSearch(event.target.value)}
 					/>
 				</Field>
 
 				<Field>
 					<FieldLabel htmlFor="type">Tipo</FieldLabel>
-					<Select items={typeOptions} defaultValue="all" name="type">
+					<Select
+						items={typeOptions}
+						defaultValue="all"
+						name="type"
+						value={typeFilter}
+						onValueChange={(value) => setTypeFilter(value ?? 'all')}
+					>
 						<SelectTrigger id="type">
 							<SelectValue />
 						</SelectTrigger>
@@ -140,7 +196,13 @@ export function Transactions() {
 
 				<Field>
 					<FieldLabel htmlFor="category">Categoria</FieldLabel>
-					<Select items={categoryOptions} defaultValue="all" name="category">
+					<Select
+						items={categoryOptions}
+						defaultValue="all"
+						name="category"
+						value={categoryFilter}
+						onValueChange={(value) => setCategoryFilter(value ?? 'all')}
+					>
 						<SelectTrigger id="category">
 							<SelectValue />
 						</SelectTrigger>
@@ -156,7 +218,13 @@ export function Transactions() {
 
 				<Field>
 					<FieldLabel htmlFor="period">Período</FieldLabel>
-					<Select items={periodOptions} defaultValue="all" name="period">
+					<Select
+						items={periodOptions}
+						defaultValue="all"
+						name="period"
+						value={periodFilter}
+						onValueChange={(value) => setPeriodFilter(value ?? 'all')}
+					>
 						<SelectTrigger id="period">
 							<SelectValue />
 						</SelectTrigger>
@@ -185,7 +253,7 @@ export function Transactions() {
 					</TableHeader>
 
 					<TableBody>
-						{transactions.map((transaction) => {
+						{filteredTransactions.map((transaction) => {
 							const Icon = icons[transaction.category?.icon as keyof typeof icons] ?? Tag
 
 							return (
