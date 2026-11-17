@@ -47,7 +47,7 @@ export function Categories() {
 					metric="Total de transações"
 					value={totalTransactions}
 				/>
-				{mostUsedCategories.length > 0 && (
+				{mostUsedCategories.length > 0 && (mostUsedCategories[0].countTransactions ?? 0) > 0 && (
 					<CategorySummaryCard
 						icon={icons[mostUsedCategories[0].icon as keyof typeof icons] ?? SquareStar}
 						color={mostUsedCategories[0].color}
