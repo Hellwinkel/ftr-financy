@@ -96,8 +96,15 @@ export function TransactionDialog({
 
 		const parsedValue = parseCurrency(value)
 
+		if (!description.trim()) {
+			toast.error('Informe uma descrição válida')
+			setDescription('')
+			return
+		}
+
 		if (Number.isNaN(parsedValue) || parsedValue <= 0) {
 			toast.error('Informe um valor válido')
+			setValue('')
 			return
 		}
 

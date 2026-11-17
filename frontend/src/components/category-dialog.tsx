@@ -95,6 +95,12 @@ export function CategoryDialog({ category }: CategoryDialogProps) {
 	async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
 		event.preventDefault()
 
+		if (!title.trim()) {
+			toast.error('Informe um título válido')
+			setTitle('')
+			return
+		}
+
 		if (!icon) {
 			toast.error('É preciso escolher um ícone para a categoria')
 			return
